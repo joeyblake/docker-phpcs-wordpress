@@ -1,15 +1,13 @@
 Docker image for [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) already configured for [WordPress Coding Standards](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards).
 
-* https://hub.docker.com/r/joinville/phpcs-wordpress/
+* https://hub.docker.com/r/joeyblake/phpcs-wordpress/
 
 ## Build
 
 ```bash
 # No proxy
-docker build --no-cache -t joinville/phpcs-wordpress .
+docker build --no-cache -t joeyblake/phpcs-wordpress .
 
-# Under proxy
-docker build --no-cache -t joinville/phpcs-wordpress --build-arg "http_proxy=$http_proxy" .
 ```
 
 ## Test
@@ -17,7 +15,7 @@ docker build --no-cache -t joinville/phpcs-wordpress --build-arg "http_proxy=$ht
 Show the available standards:
 
 ```console
-$ docker run joinville/phpcs-wordpress phpcs -i
+$ docker run joeyblake/phpcs-wordpress phpcs -i
 The installed coding standards are MySource, PEAR, PHPCS, Squiz, Zend, PSR2, PSR1, WordPress, WordPress-Extra, WordPress-Docs, WordPress-Core and WordPress-VIP
 $
 ```
@@ -26,10 +24,10 @@ $
 
 ```bash
 # Check for code standards issues
-docker run -v /path/to/php/files/:/scripts/ joinville/phpcs-wordpress phpcs  --standard=WordPress-Core /scripts/
+docker run -v /path/to/php/files/:/scripts/ joeyblake/phpcs-wordpress phpcs  --standard=WordPress-Core .
 
 # Fix code standards issues
-docker run -v /path/to/php/files/:/scripts/ joinville/phpcs-wordpress phpcbf --standard=WordPress-Core /scripts/
+docker run -v /path/to/php/files/:/scripts/ joeyblake/phpcs-wordpress phpcbf --standard=WordPress-Core .
 ```
 
 ## GitLab CI example
@@ -38,7 +36,7 @@ docker run -v /path/to/php/files/:/scripts/ joinville/phpcs-wordpress phpcbf --s
 # Run PHP_CodeSniffer in our custom WordPress plugin and theme
 code_lint:
   stage: test
-  image: joinville/phpcs-wordpress
+  image: joeyblake/phpcs-wordpress
   script:
     - phpcs --standard=WordPress-Core wp-content/plugins/my-awesome-plugin
     - phpcs --standard=WordPress-Core --ignore=/bootstrap/,/inc/ wp-content/themes/my-awesome-theme

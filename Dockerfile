@@ -1,15 +1,35 @@
-FROM php:7.0-alpine
+FROM php:7.2-alpine
+LABEL maintainer="joeyblake@gmail.com"
+
+# Install Composer globally - https://github.com/composer/composer
+
+ENV COMPOSER_HOME /composer
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV PATH /composer/vendor/bin:$PATH
+
+RUN curl https://getcomposer.org/installer -o /tmp/composer-setup.php \
+    && curl https://composer.github.io/installer.sig -o /tmp/composer-setup.sig \
+    && php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') !== trim(file_get_contents('/tmp/composer-setup.sig'))) { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
+    && php /tmp/composer-setup.php --no-ansi --install-dir=/usr/local/bin --filename=composer \
+    && php -r "unlink('/tmp/composer-setup.php');" \
+    && php -r "unlink('/tmp/composer-setup.sig');"
 
 # Required by phpcbf
-RUN apk add --no-cache patch
 
-# To build under proxy, use: docker build --build-arg "http_proxy=$http_proxy" 
-RUN if test -n "$http_proxy"; then pear config-set http_proxy "$http_proxy"; fi
+RUN apk add --update --no-cache patch \
+    && rm -rf /var/cache/apk/* /var/tmp/* /tmp/*
 
-RUN pear install PHP_CodeSniffer-2.7.0
+RUN echo "memory_limit=-1" > $PHP_INI_DIR/conf.d/memory-limit.ini
 
-# Install the WordPress rules
-ENV WPCS_VERSION 0.10.0
-ADD https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/${WPCS_VERSION}.zip /wpcs.zip
-RUN unzip /wpcs.zip -d / && \
-    phpcs --config-set installed_paths /WordPress-Coding-Standards-${WPCS_VERSION}
+RUN composer create-project wp-coding-standards/wpcs --no-dev
+ENV PATH=$PATH:/wpcs/vendor/bin
+
+ADD https://github.com/Knucklepuck/kp-cs/archive/master.zip /kp-cs.zip
+RUN unzip /kp-cs.zip -d /
+
+RUN phpcs --config-set installed_paths /wpcs,/kp-cs-master && \
+    phpcs --config-set colors true && \
+    phpcs --config-set show_progress 1
+
+VOLUME ["/scripts"]
+WORKDIR /scripts
