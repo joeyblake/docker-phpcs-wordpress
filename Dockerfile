@@ -22,6 +22,7 @@ RUN apk add --update --no-cache patch \
 RUN echo "memory_limit=-1" > $PHP_INI_DIR/conf.d/memory-limit.ini
 
 RUN composer create-project wp-coding-standards/wpcs --no-dev
+RUN composer require squizlabs/php_codesniffer:3.3.2
 ENV PATH=$PATH:/wpcs/vendor/bin
 
 ADD https://github.com/Knucklepuck/kp-cs/archive/master.zip /kp-cs.zip
