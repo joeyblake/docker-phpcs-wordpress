@@ -10,7 +10,7 @@ ENV PATH /composer/vendor/bin:$PATH
 RUN curl https://getcomposer.org/installer -o /tmp/composer-setup.php \
     && curl https://composer.github.io/installer.sig -o /tmp/composer-setup.sig \
     && php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') !== trim(file_get_contents('/tmp/composer-setup.sig'))) { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
-    && php /tmp/composer-setup.php --no-ansi --install-dir=/usr/local/bin --filename=composer \
+    && php /tmp/composer-setup.php --1 --no-ansi --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('/tmp/composer-setup.php');" \
     && php -r "unlink('/tmp/composer-setup.sig');"
 
@@ -22,7 +22,7 @@ RUN apk add --update --no-cache patch \
 RUN echo "memory_limit=-1" > $PHP_INI_DIR/conf.d/memory-limit.ini
 
 RUN composer create-project wp-coding-standards/wpcs --no-dev
-RUN composer require squizlabs/php_codesniffer 3.3.2
+RUN composer require squizlabs/php_codesniffer 3.6.0
 ENV PATH=$PATH:/wpcs/vendor/bin
 
 ADD https://github.com/Knucklepuck/kp-cs/archive/master.zip /kp-cs.zip
