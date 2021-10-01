@@ -1,4 +1,4 @@
-FROM php:7.2-alpine
+FROM php:7.3-alpine
 LABEL maintainer="joeyblake@gmail.com"
 
 # Install Composer globally - https://github.com/composer/composer
